@@ -1,0 +1,14 @@
++---------------------------------------+
+                      |       Enterprise Principal / DAO      |
+                      +-------------------+-------------------+
+                                          | Deposits SPL
+                                          v
++-----------------------+     +-----------------------+     +-----------------------+
+|  Enterprise Sentinel  | <== |   AegisStream Vault   | ==> |      Beneficiary      |
+| (Discord/Slack/Resend)|     |  (Anchor / SPL Token) |     |  (Stream Extraction)  |
++-----------------------+     +-----------+-----------+     +-----------------------+
+                                          ^
+                                          | Automated Crank Execution
+                              +-----------+-----------+
+                              |   Autonomous Keepers  |
+                              +-----------------------+

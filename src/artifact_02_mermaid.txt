@@ -1,0 +1,38 @@
+flowchart TD
+    subgraph ClientLayer ["Client & Operations Layer"]
+        DEP[Depositor / Enterprise Treasury]
+        BEN[Beneficiary / Contributor]
+        ARB[Enterprise Arbiter]
+        KEEPER[Autonomous Crank Keeper Service]
+    end
+
+    subgraph SolanaOnChain ["Solana On-Chain Program (AegisStream)"]
+        PV[Program Vault PDA]
+        VA[Vault Authority PDA]
+        VS[Vault State Account]
+        CLK[Solana Sysvar Clock]
+        SPL[SPL Token Program]
+    end
+
+    subgraph OffChainTelemetry ["Enterprise Integration & Telemetry Worker"]
+        RPC[Solana Geyser / RPC WebSocket]
+        DISPATCH[Event Dispatcher & Signature Validator]
+        DISCORD[Enterprise Discord Webhook API]
+        RESEND[Resend Corporate Email API]
+        HEALTH[Stateless Healthcheck HTTP Server /healthz]
+    end
+
+    DEP -->|1. initialize_vault & deposit| VS
+    DEP -->|Transfer Token to PDA| PV
+    KEEPER -->|2. Check release eligibility| VS
+    CLK -->|Read On-Chain Timestamp| KEEPER
+    KEEPER -->|3. execute_release crank| VS
+    VS -->|CPI Transfer via Vault Authority Seeds| SPL
+    SPL -->|Token Payout| BEN
+    ARB -->|Raise dispute / freeze| VS
+
+    VS -->|Emit On-Chain Events| RPC
+    RPC -->|Subscribe via logsSubscribe| DISPATCH
+    DISPATCH -->|Format & Dispatch Webhook| DISCORD
+    DISPATCH -->|Dispatch Audit Email Alert| RESEND
+    DISPATCH -->|Update Metrics| HEALTH
